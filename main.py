@@ -2,40 +2,32 @@ import copy
 import torch
 import warnings
 from models.VGG import *
-from scripts import predict, train, utils, fed
+from scripts.fed import common_cluster, common_basic, common_max
+from scripts.predict import predict
+from scripts.train import client_local_train
+from scripts.utils import get_dataset
 
 warnings.filterwarnings("ignore")
 
+
 if __name__ == '__main__':
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device('mps')
 
     # 设备数量
     device_num = 40
 
     # load dataset and user groups
-    train_dataset, test_dataset, user_groups, user_groups_test = utils.get_dataset("cifar10", device_num)
+    train_dataset, test_dataset, user_groups, user_groups_test = get_dataset('SpeechCommands', device_num)
 
     # Training
-    epochs = 32
+    epochs = 35
+    num_classes = 12
+    lr = 0.01
 
     uid = [_ for _ in range(device_num)]
-    modelAccept = {_: None for _ in range(device_num)}
+    modelAccept = {_: None for _ in range(device_num)}  # client的参数列表
     local_acc = [[] for _ in range(device_num)]
-
-    # 不同的设备采用不同架构的网络
-    for idx in uid:
-        if idx < 10:
-            modelAccept[idx] = vgg11_bn()
-
-        elif 10 <= idx < 20:
-            modelAccept[idx] = vgg13_bn()
-
-        elif 20 <= idx < 30:
-            modelAccept[idx] = vgg16_bn()
-
-        else:
-            modelAccept[idx] = vgg19_bn()
 
     for epoch in range(epochs):
 
@@ -43,71 +35,40 @@ if __name__ == '__main__':
 
         for idx in range(device_num):
 
-            train_all = user_groups[idx]
+            if idx < 10:
+                model = vgg11_bn(in_channels=1, num_classes=num_classes)
 
-            if epoch == 0:
-                model = modelAccept[idx]
+            elif 10 <= idx < 20:
+                model = vgg13_bn(in_channels=1, num_classes=num_classes)
 
-            else:
-                if idx < 10:
-                    model = vgg11_bn()
-
-                elif 10 <= idx < 20:
-                    model = vgg13_bn()
-
-                elif 20 <= idx < 30:
-                    model = vgg16_bn()
-
-                else:
-                    model = vgg19_bn()
-
-                model.load_state_dict(modelAccept[idx])
-
-            modelAccept[idx] = copy.deepcopy(train.client_local_train(model, train_dataset, train_all, device))
-
-            # 预测
-            acc = predict.predict(model, test_dataset, user_groups_test[idx], device)
-            local_acc[idx].append(acc)
-            print(local_acc[idx])
-
-        for idx in uid:
-
-            train_all = user_groups[idx]
-            test_all = user_groups_test[idx]
-
-            if epoch == 0:
-                model = modelAccept[idx]
+            elif 20 <= idx < 30:
+                model = vgg16_bn(in_channels=1, num_classes=num_classes)
 
             else:
-                if idx < 10:
-                    model = vgg11_bn()
+                model = vgg19_bn(in_channels=1, num_classes=num_classes)
 
-                elif 10 <= idx < 20:
-                    model = vgg13_bn()
-
-                elif 20 <= idx < 30:
-                    model = vgg16_bn()
-
-                else:
-                    model = vgg19_bn()
-
+            if epoch != 0:
                 model.load_state_dict(modelAccept[idx])
 
-            modelAccept[idx] = copy.deepcopy(train.client_local_train(model, train_dataset, train_all, device))
+            if epoch == 2:
+                lr = 0.0001
+
+            # 保存client进行local_train后的模型参数
+            modelAccept[idx] = copy.deepcopy(client_local_train(model, train_dataset, user_groups[idx], device, lr=lr, weight_decay=1e-2))
 
             # 预测
-            acc = predict.predict(model, test_dataset, test_all, device)
+            acc = predict(model, test_dataset, user_groups_test[idx], device)
             local_acc[idx].append(acc)
             print(local_acc[idx])
 
         # modelAccept = common_max(modelAccept)
         # modelAccept = common_cluster(modelAccept)
-        _, modelAccept = fed.common_basic(modelAccept)
+        _, modelAccept = common_basic(modelAccept)
 
         # 输出4种不同模型的正确率
-        res = [[] for _ in range(4)]
+        res = [[] for i in range(4)]
         for i in range(4):
-            res[i] = [0 for _ in range(len(local_acc[0]))]
+            res[i] = [0 for i in range(len(local_acc[0]))]
 
         for j in range(len(local_acc[0])):
             start = 0
@@ -115,7 +76,7 @@ if __name__ == '__main__':
                 sum = 0.0
                 for i in range(start, start + 10):
                     sum += local_acc[i][j]
-                res[type][j] = round(sum / 10, 2)
+                res[type][j] = round(sum / 10.0, 2)
 
                 start += 10
 

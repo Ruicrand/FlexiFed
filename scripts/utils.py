@@ -1,10 +1,19 @@
+import os
+from random import random
+
+import librosa
 import numpy as np
 import torch
-import os
-import librosa
-from torch.utils.data import Dataset
-from torchvision import transforms, datasets
+import torchvision
 import torchaudio
+from pprint import pprint
+from torch.utils.data import Dataset
+from torchvision import datasets
+
+from process.transforms_stft import *
+from process.transforms_wav import *
+from scripts.speech_commands_dataset import SpeechCommandsDataset, BackgroundNoiseDataset
+import matplotlib.pyplot as plt
 
 
 class DatasetSplit(Dataset):
@@ -16,8 +25,24 @@ class DatasetSplit(Dataset):
         return len(self.idxs)
 
     def __getitem__(self, item):
-        image, label = self.dataset[self.idxs[item]]
-        return image, label
+        # image, label = self.dataset[self.idxs[item]]
+        return self.dataset[self.idxs[item]]
+
+    def make_weights_for_balanced_classes(self):
+        """adopted from https://discuss.pytorch.org/t/balanced-sampling-between-classes-with-torchvision-dataloader/2703/3"""
+
+        nclasses = 12
+        count = np.zeros(nclasses)
+        for item in self.idxs:
+            count[self.dataset[item]['target']] += 1
+
+        N = len(self.idxs)
+        weight_per_class = N * 1.0 / count
+        weight = np.zeros(len(self.idxs))
+
+        for idx, item in enumerate(self.idxs):
+            weight[idx] = weight_per_class[self.dataset[item]['target']]
+        return weight
 
 
 def cifar_iid(dataset, num_users):
@@ -34,18 +59,18 @@ def cifar_iid(dataset, num_users):
 def get_cifar(device_num):
     data_dir = '/kaggle/input/cifar10-python'
 
-    train_transform = transforms.Compose([
-        transforms.Pad(4),
-        transforms.ToTensor(),
-        transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
-        transforms.RandomHorizontalFlip(),
-        transforms.RandomGrayscale(),
-        transforms.RandomCrop(32, padding=4),
+    train_transform = torchvision.transforms.Compose([
+        torchvision.transforms.Pad(4),
+        torchvision.transforms.ToTensor(),
+        torchvision.transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
+        torchvision.transforms.RandomHorizontalFlip(),
+        torchvision.transforms.RandomGrayscale(),
+        torchvision.transforms.RandomCrop(32, padding=4),
     ])
 
-    test_transform = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
+    test_transform = torchvision.transforms.Compose([
+        torchvision.transforms.ToTensor(),
+        torchvision.transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
     ])
 
     train_dataset = datasets.CIFAR10(data_dir, train=True, transform=train_transform, download=False)
@@ -75,18 +100,18 @@ def get_cinic(device_num):
     mean = [0.47889522, 0.47227842, 0.43047404]
     std = [0.24205776, 0.23828046, 0.25874835]
 
-    train_transform = transforms.Compose([
-        transforms.Pad(4),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=mean, std=std),
-        transforms.RandomHorizontalFlip(),
-        transforms.RandomGrayscale(),
-        transforms.RandomCrop(32, padding=4),
+    train_transform = torchvision.transforms.Compose([
+        torchvision.transforms.Pad(4),
+        torchvision.transforms.ToTensor(),
+        torchvision.transforms.Normalize(mean=mean, std=std),
+        torchvision.transforms.RandomHorizontalFlip(),
+        torchvision.transforms.RandomGrayscale(),
+        torchvision.transforms.RandomCrop(32, padding=4),
     ])
 
-    test_transform = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize(mean=mean, std=std),
+    test_transform = torchvision.transforms.Compose([
+        torchvision.transforms.ToTensor(),
+        torchvision.transforms.Normalize(mean=mean, std=std),
     ])
 
     train_dataset = datasets.ImageFolder(
@@ -104,12 +129,36 @@ def get_cinic(device_num):
 
 
 def get_speech(device_num):
-    data_dir = ""
+    n_mels = 32
+    background_noise = '/Users/chenrui/Desktop/课件/REPO/edge computing/project/data/SpeechCommands/train/_background_noise_'
+    train_dataset = '/Users/chenrui/Desktop/课件/REPO/edge computing/project/data/SpeechCommands/train'
+    test_dataset = '/Users/chenrui/Desktop/课件/REPO/edge computing/project/data/SpeechCommands/test'
 
-    train_dataset = torchaudio.datasets.SPEECHCOMMANDS(root=data_dir, download=True, subset='training')
-    test_dataset = torchaudio.datasets.SPEECHCOMMANDS(root=data_dir, download=True, subset='testing')
+    data_aug_transform = torchvision.transforms.Compose(
+        [ChangeAmplitude(), ChangeSpeedAndPitchAudio(), FixAudioLength(), ToSTFT(), StretchAudioOnSTFT(),
+         TimeshiftAudioOnSTFT(), FixSTFTDimension()])
+    bg_dataset = BackgroundNoiseDataset(background_noise, data_aug_transform)
+    add_bg_noise = AddBackgroundNoiseOnSTFT(bg_dataset)
 
-    return None
+    train_transform = torchvision.transforms.Compose(
+        [ToMelSpectrogramFromSTFT(n_mels=n_mels), DeleteSTFT(), ToTensor('mel_spectrogram', 'input')])
+    train_dataset = SpeechCommandsDataset(train_dataset,
+                                          torchvision.transforms.Compose([LoadAudio(),
+                                                                          data_aug_transform,
+                                                                          add_bg_noise,
+                                                                          train_transform]))
+
+    test_transform = torchvision.transforms.Compose(
+        [ToMelSpectrogram(n_mels=n_mels), ToTensor('mel_spectrogram', 'input')])
+    test_dataset = SpeechCommandsDataset(test_dataset,
+                                         torchvision.transforms.Compose([LoadAudio(),
+                                                                         FixAudioLength(),
+                                                                         test_transform]))
+
+    user_groups = cifar_iid(train_dataset, device_num)
+    user_groups_test = cifar_iid(test_dataset, device_num)
+
+    return train_dataset, test_dataset, user_groups, user_groups_test
 
 
 def get_dataset(dataset_name, device_num):
@@ -147,12 +196,21 @@ def get_common_base_layers(model_list):
     return commonList
 
 
-if __name__ == '__main__':
+def plot_spectrogram(specgram, title=None, ylabel="freq_bin"):
+    fig, axs = plt.subplots(1, 1)
+    axs.set_title(title or "Spectrogram (db)")
+    axs.set_ylabel(ylabel)
+    axs.set_xlabel("frame")
+    im = axs.imshow(librosa.power_to_db(specgram), origin="lower", aspect="auto")
+    fig.colorbar(im, ax=axs)
+    plt.show()
 
-    data_dir = "/Users/chenrui/Desktop/课件/REPO/edge computing/project/FlexiFed/data"
-
-    train_dataset = torchaudio.datasets.SPEECHCOMMANDS(root=data_dir, download=True, subset='training')
-    test_dataset = torchaudio.datasets.SPEECHCOMMANDS(root=data_dir, download=True, subset='testing')
-
-    print(len(train_dataset))
-    print(len(test_dataset))
+#
+# if __name__ == '__main__':
+#     data_dir = '/Users/chenrui/Desktop/课件/REPO/edge computing/project/data/SpeechCommands/train/bed/0a7c2a8d_nohash_0.wav'
+#
+#     wave, _ = torchaudio.load(data_dir)
+#
+#     melspec = torchaudio.transforms.MelSpectrogram(n_mels=32, n_fft=1024)(wave)
+#
+#     plot_spectrogram(melspec[0], title="MelSpectrogram - torchaudio", ylabel="mel freq")

@@ -51,9 +51,8 @@ class VGG(nn.Module):
         return x
 
 
-def make_layers(cfg, batch_norm=False):
+def make_layers(cfg, batch_norm=False, in_channels=3):
     layers = []
-    in_channels = 3
     for v in cfg:
         if v == 'M':
             layers += [nn.MaxPool2d(kernel_size=2, stride=2)]
@@ -67,41 +66,41 @@ def make_layers(cfg, batch_norm=False):
     return nn.Sequential(*layers)
 
 
-def vgg11():
+def vgg11(in_channels=3, num_classes=10):
     """VGG 11-layer model (configuration "A")"""
-    return VGG(make_layers(cfg['A']))
+    return VGG(make_layers(cfg['A'], in_channels=in_channels), num_classes=num_classes)
 
 
-def vgg11_bn():
+def vgg11_bn(in_channels=3, num_classes=10):
     """VGG 11-layer model (configuration "A") with batch normalization"""
-    return VGG(make_layers(cfg['A'], batch_norm=True))
+    return VGG(make_layers(cfg['A'], batch_norm=True, in_channels=in_channels), num_classes=num_classes)
 
 
-def vgg13():
+def vgg13(in_channels=3, num_classes=10):
     """VGG 13-layer model (configuration "B")"""
-    return VGG(make_layers(cfg['B']))
+    return VGG(make_layers(cfg['B'], in_channels=in_channels), num_classes=num_classes)
 
 
-def vgg13_bn():
+def vgg13_bn(in_channels=3, num_classes=10):
     """VGG 13-layer model (configuration "B") with batch normalization"""
-    return VGG(make_layers(cfg['B'], batch_norm=True))
+    return VGG(make_layers(cfg['B'], batch_norm=True, in_channels=in_channels), num_classes=num_classes)
 
 
-def vgg16():
+def vgg16(in_channels=3, num_classes=10):
     """VGG 16-layer model (configuration "D")"""
-    return VGG(make_layers(cfg['D']))
+    return VGG(make_layers(cfg['D'], in_channels=in_channels), num_classes=num_classes)
 
 
-def vgg16_bn():
+def vgg16_bn(in_channels=3, num_classes=10):
     """VGG 16-layer model (configuration "D") with batch normalization"""
-    return VGG(make_layers(cfg['D'], batch_norm=True))
+    return VGG(make_layers(cfg['D'], batch_norm=True, in_channels=in_channels), num_classes=num_classes)
 
 
-def vgg19():
+def vgg19(in_channels=3, num_classes=10):
     """VGG 19-layer model (configuration "E")"""
-    return VGG(make_layers(cfg['E']))
+    return VGG(make_layers(cfg['E'], in_channels=in_channels), num_classes=num_classes)
 
 
-def vgg19_bn():
+def vgg19_bn(in_channels=3, num_classes=10):
     """VGG 19-layer model (configuration 'E') with batch normalization"""
-    return VGG(make_layers(cfg['E'], batch_norm=True))
+    return VGG(make_layers(cfg['E'], batch_norm=True, in_channels=in_channels), num_classes=num_classes)

@@ -1,6 +1,8 @@
 import copy
 import torch
 import warnings
+
+from models.VDCNN import *
 from models.VGG import *
 from scripts.fed import common_cluster, common_basic, common_max
 from scripts.predict import predict
@@ -18,11 +20,11 @@ if __name__ == '__main__':
     device_num = 40
 
     # load dataset and user groups
-    train_dataset, test_dataset, user_groups, user_groups_test = get_dataset('SpeechCommands', device_num)
+    train_dataset, test_dataset, user_groups, user_groups_test = get_dataset('agnews', device_num)
 
     # Training
     epochs = 35
-    num_classes = 12
+    num_classes = 30
     lr = 0.01
 
     uid = [_ for _ in range(device_num)]
@@ -36,25 +38,25 @@ if __name__ == '__main__':
         for idx in range(device_num):
 
             if idx < 10:
-                model = vgg11_bn(in_channels=1, num_classes=num_classes)
-
+                # model = vgg11_bn(in_channels=1, num_classes=num_classes)
+                model = VDCNN_9()
             elif 10 <= idx < 20:
-                model = vgg13_bn(in_channels=1, num_classes=num_classes)
-
+                # model = vgg13_bn(in_channels=1, num_classes=num_classes)
+                model = VDCNN_17()
             elif 20 <= idx < 30:
-                model = vgg16_bn(in_channels=1, num_classes=num_classes)
-
+                # model = vgg16_bn(in_channels=1, num_classes=num_classes)
+                model = VDCNN_29()
             else:
-                model = vgg19_bn(in_channels=1, num_classes=num_classes)
-
+                # model = vgg19_bn(in_channels=1, num_classes=num_classes)
+                model = VDCNN_49()
             if epoch != 0:
                 model.load_state_dict(modelAccept[idx])
 
-            if epoch == 2:
-                lr = 0.0001
+            # if epoch == 2:
+            #     lr = 0.0001
 
             # 保存client进行local_train后的模型参数
-            modelAccept[idx] = copy.deepcopy(client_local_train(model, train_dataset, user_groups[idx], device, lr=lr, weight_decay=1e-2))
+            modelAccept[idx] = copy.deepcopy(client_local_train(model, train_dataset, user_groups[idx], device))
 
             # 预测
             acc = predict(model, test_dataset, user_groups_test[idx], device)

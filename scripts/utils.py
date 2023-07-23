@@ -5,13 +5,14 @@ import librosa
 import numpy as np
 import torch
 import torchvision
-import torchaudio
 from pprint import pprint
 from torch.utils.data import Dataset
 from torchvision import datasets
+import torchtext
 
 from process.transforms_stft import *
 from process.transforms_wav import *
+from scripts.agnews_dataset import AGNewsDataset
 from scripts.speech_commands_dataset import SpeechCommandsDataset, BackgroundNoiseDataset
 import matplotlib.pyplot as plt
 
@@ -27,22 +28,6 @@ class DatasetSplit(Dataset):
     def __getitem__(self, item):
         # image, label = self.dataset[self.idxs[item]]
         return self.dataset[self.idxs[item]]
-
-    def make_weights_for_balanced_classes(self):
-        """adopted from https://discuss.pytorch.org/t/balanced-sampling-between-classes-with-torchvision-dataloader/2703/3"""
-
-        nclasses = 12
-        count = np.zeros(nclasses)
-        for item in self.idxs:
-            count[self.dataset[item]['target']] += 1
-
-        N = len(self.idxs)
-        weight_per_class = N * 1.0 / count
-        weight = np.zeros(len(self.idxs))
-
-        for idx, item in enumerate(self.idxs):
-            weight[idx] = weight_per_class[self.dataset[item]['target']]
-        return weight
 
 
 def cifar_iid(dataset, num_users):
@@ -129,23 +114,27 @@ def get_cinic(device_num):
 
 
 def get_speech(device_num):
+
     n_mels = 32
-    background_noise = '/Users/chenrui/Desktop/课件/REPO/edge computing/project/data/SpeechCommands/train/_background_noise_'
+    # background_noise = '/Users/chenrui/Desktop/课件/REPO/edge computing/project/data/SpeechCommands/train/_background_noise_'
     train_dataset = '/Users/chenrui/Desktop/课件/REPO/edge computing/project/data/SpeechCommands/train'
     test_dataset = '/Users/chenrui/Desktop/课件/REPO/edge computing/project/data/SpeechCommands/test'
 
     data_aug_transform = torchvision.transforms.Compose(
         [ChangeAmplitude(), ChangeSpeedAndPitchAudio(), FixAudioLength(), ToSTFT(), StretchAudioOnSTFT(),
          TimeshiftAudioOnSTFT(), FixSTFTDimension()])
-    bg_dataset = BackgroundNoiseDataset(background_noise, data_aug_transform)
-    add_bg_noise = AddBackgroundNoiseOnSTFT(bg_dataset)
+    # bg_dataset = BackgroundNoiseDataset(background_noise, data_aug_transform)
+    # add_bg_noise = AddBackgroundNoiseOnSTFT(bg_dataset)
 
+    # train_transform = torchvision.transforms.Compose(
+    #     [ToMelSpectrogram(n_mels=n_mels), DeleteSTFT(), ToTensor('mel_spectrogram', 'input')])
     train_transform = torchvision.transforms.Compose(
-        [ToMelSpectrogramFromSTFT(n_mels=n_mels), DeleteSTFT(), ToTensor('mel_spectrogram', 'input')])
+        [ToMelSpectrogram(n_mels=n_mels), ToTensor('mel_spectrogram', 'input')])
     train_dataset = SpeechCommandsDataset(train_dataset,
                                           torchvision.transforms.Compose([LoadAudio(),
-                                                                          data_aug_transform,
-                                                                          add_bg_noise,
+                                                                          FixAudioLength(),
+                                                                          # data_aug_transform,
+                                                                          # add_bg_noise,
                                                                           train_transform]))
 
     test_transform = torchvision.transforms.Compose(
@@ -154,6 +143,32 @@ def get_speech(device_num):
                                          torchvision.transforms.Compose([LoadAudio(),
                                                                          FixAudioLength(),
                                                                          test_transform]))
+
+    # train_transform = torchvision.transforms.Compose([
+    #     torchaudio.transforms.MelSpectrogram(n_mels=n_mels, n_fft=1024),
+    #     torchaudio.transforms.TimeMasking(3),
+    #     torchaudio.transforms.FrequencyMasking(3),
+    # ])
+    # train_dataset = SpeechCommandsDataset(train_dataset, train_transform)
+    #
+    # test_transform = torchvision.transforms.Compose([torchaudio.transforms.MelSpectrogram(n_mels=n_mels, n_fft=1024)])
+    # test_dataset = SpeechCommandsDataset(test_dataset, test_transform)
+
+    user_groups = cifar_iid(train_dataset, device_num)
+    user_groups_test = cifar_iid(test_dataset, device_num)
+
+    return train_dataset, test_dataset, user_groups, user_groups_test
+
+
+def get_agnews(device_num):
+    train_dataset = '/Users/chenrui/Desktop/课件/REPO/edge computing/project/data/AGNews/train.csv'
+    test_dataset = '/Users/chenrui/Desktop/课件/REPO/edge computing/project/data/AGNews/test.csv'
+
+    train_transform = torchvision.transforms.Compose([torchtext.transforms.ToTensor()])
+    test_transform = torchvision.transforms.Compose([torchtext.transforms.ToTensor()])
+
+    train_dataset = AGNewsDataset(train_dataset, train_transform)
+    test_dataset = AGNewsDataset(test_dataset, test_transform)
 
     user_groups = cifar_iid(train_dataset, device_num)
     user_groups_test = cifar_iid(test_dataset, device_num)
@@ -170,6 +185,9 @@ def get_dataset(dataset_name, device_num):
 
     elif dataset_name == 'SpeechCommands':
         return get_speech(device_num)
+
+    elif dataset_name == 'agnews':
+        return get_agnews(device_num)
 
 
 def get_common_base_layers(model_list):

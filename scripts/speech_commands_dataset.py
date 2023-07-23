@@ -3,42 +3,33 @@ __author__ = 'Yuan Xu'
 
 import os
 import numpy as np
+from pprint import pprint
 
 import librosa
+
 
 from torch.utils.data import Dataset
 
 __all__ = ['CLASSES', 'SpeechCommandsDataset', 'BackgroundNoiseDataset']
 
-CLASSES = 'unknown, silence, yes, no, up, down, left, right, on, off, stop, go'.split(', ')
+CLASSES = ['right', 'eight', 'cat', 'tree', 'bed', 'happy', 'go', 'dog', 'no', 'wow',
+           'nine', 'left', 'stop', 'three', 'sheila', 'one', 'bird', 'zero', 'seven', 'up',
+           'marvin', 'two', 'house', 'down', 'six', 'yes', 'on', 'five', 'off', 'four']
 
 
 class SpeechCommandsDataset(Dataset):
-    """Google speech commands dataset. Only 'yes', 'no', 'up', 'down', 'left',
-    'right', 'on', 'off', 'stop' and 'go' are treated as known classes.
-    All other classes are used as 'unknown' samples.
-    See for more information: https://www.kaggle.com/c/tensorflow-speech-recognition-challenge
-    """
 
-    def __init__(self, folder, transform=None, classes=CLASSES, silence_percentage=0.1):
-        all_classes = [d for d in os.listdir(folder) if os.path.isdir(os.path.join(folder, d)) and not d.startswith('_')]
+    def __init__(self, folder, transform=None, classes=CLASSES):
 
         class_to_idx = {classes[i]: i for i in range(len(classes))}
-        for c in all_classes:
-            if c not in class_to_idx:
-                class_to_idx[c] = 0
 
         data = []
-        for c in all_classes:
+        for c in classes:
             d = os.path.join(folder, c)
             target = class_to_idx[c]
             for f in os.listdir(d):
                 path = os.path.join(d, f)
                 data.append((path, target))
-
-        # add silence
-        target = class_to_idx['silence']
-        data += [('', target)] * int(len(data) * silence_percentage)
 
         self.classes = classes
         self.data = data
@@ -87,3 +78,10 @@ class BackgroundNoiseDataset(Dataset):
             data = self.transform(data)
 
         return data
+
+
+if __name__ == '__main__':
+    train_dir = '/Users/chenrui/Desktop/课件/REPO/edge computing/project/data/SpeechCommands/test'
+    train_dataset = SpeechCommandsDataset(train_dir)
+    pprint(len(train_dataset.data))
+    print(10000 / 40)

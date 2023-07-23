@@ -2,7 +2,7 @@
 
 __author__ = 'Yuan Xu'
 
-import random
+import random as rand
 import numpy as np
 import librosa
 
@@ -12,7 +12,7 @@ from torch.utils.data import Dataset
 
 def should_apply_transform(prob=0.5):
     """Transforms are only randomly applied with the given probability."""
-    return random.random() < prob
+    return rand.random() < prob
 
 
 class LoadAudio(object):
@@ -61,7 +61,7 @@ class ChangeAmplitude(object):
         if not should_apply_transform():
             return data
 
-        data['samples'] = data['samples'] * random.uniform(*self.amplitude_range)
+        data['samples'] = data['samples'] * rand.uniform(*self.amplitude_range)
         return data
 
 
@@ -77,7 +77,7 @@ class ChangeSpeedAndPitchAudio(object):
 
         samples = data['samples']
         sample_rate = data['sample_rate']
-        scale = random.uniform(-self.max_scale, self.max_scale)
+        scale = rand.uniform(-self.max_scale, self.max_scale)
         speed_fac = 1.0 / (1 + scale)
         data['samples'] = np.interp(np.arange(0, len(samples), speed_fac), np.arange(0, len(samples)), samples).astype(
             np.float32)
@@ -94,7 +94,7 @@ class StretchAudio(object):
         if not should_apply_transform():
             return data
 
-        scale = random.uniform(-self.max_scale, self.max_scale)
+        scale = rand.uniform(-self.max_scale, self.max_scale)
         data['samples'] = librosa.effects.time_stretch(data['samples'], rate=1 + scale)
         return data
 
@@ -112,7 +112,7 @@ class TimeshiftAudio(object):
         samples = data['samples']
         sample_rate = data['sample_rate']
         max_shift = (sample_rate * self.max_shift_seconds)
-        shift = random.randint(int(-max_shift), max_shift)
+        shift = rand.randint(int(-max_shift), max_shift)
         a = -min(0, shift)
         b = max(0, shift)
         samples = np.pad(samples, (a, b), "constant")
@@ -132,8 +132,8 @@ class AddBackgroundNoise(Dataset):
             return data
 
         samples = data['samples']
-        noise = random.choice(self.bg_dataset)['samples']
-        percentage = random.uniform(0, self.max_percentage)
+        noise = rand.choice(self.bg_dataset)['samples']
+        percentage = rand.uniform(0, self.max_percentage)
         data['samples'] = samples * (1 - percentage) + noise * percentage
         return data
 

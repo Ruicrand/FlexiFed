@@ -2,7 +2,7 @@
 
 __author__ = 'Erdene-Ochir Tuguldur'
 
-import random
+import random as rand
 import numpy as np
 import librosa
 from torch.utils.data import Dataset
@@ -39,7 +39,7 @@ class StretchAudioOnSTFT(object):
         stft = data['stft']
         sample_rate = data['sample_rate']
         hop_length = data['hop_length']
-        scale = random.uniform(-self.max_scale, self.max_scale)
+        scale = rand.uniform(-self.max_scale, self.max_scale)
         stft_stretch = librosa.core.phase_vocoder(D=stft, rate=1 + scale, hop_length=hop_length)
         data['stft'] = stft_stretch
         return data
@@ -56,7 +56,7 @@ class TimeshiftAudioOnSTFT(object):
             return data
 
         stft = data['stft']
-        shift = random.randint(-self.max_shift, self.max_shift)
+        shift = rand.randint(-self.max_shift, self.max_shift)
         a = -min(0, shift)
         b = max(0, shift)
         stft = np.pad(stft, ((0, 0), (a, b)), "constant")
@@ -79,8 +79,8 @@ class AddBackgroundNoiseOnSTFT(Dataset):
         if not should_apply_transform():
             return data
 
-        noise = random.choice(self.bg_dataset)['stft']
-        percentage = random.uniform(0, self.max_percentage)
+        noise = rand.choice(self.bg_dataset)['stft']
+        percentage = rand.uniform(0, self.max_percentage)
         data['stft'] = data['stft'] * (1 - percentage) + noise * percentage
         return data
 

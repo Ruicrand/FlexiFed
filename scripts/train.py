@@ -4,6 +4,7 @@ import numpy as np
 import torch
 import torch.nn as nn
 from tqdm import tqdm
+
 from scripts.utils import DatasetSplit, plot_spectrogram
 from torch.utils.data import DataLoader, WeightedRandomSampler
 
@@ -16,13 +17,10 @@ def client_local_train(net, dataset, idxs, device, lr=0.01, weight_decay=5e-4, e
     criterion.to(device)
     optimizer = torch.optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=weight_decay)
 
-    train_sample = set(np.random.choice(list(idxs), 800, replace=False))
+    train_sample = set(np.random.choice(list(idxs), 1000, replace=False))
     train_dataset = DatasetSplit(dataset, train_sample)
 
-    weights = train_dataset.make_weights_for_balanced_classes()
-    sampler = WeightedRandomSampler(weights, len(weights))
-
-    train_loader = DataLoader(train_dataset, batch_size=64, sampler=sampler)
+    train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
 
     pbar = tqdm(range(epochs), unit='epoch', unit_scale=1)
 
@@ -33,9 +31,10 @@ def client_local_train(net, dataset, idxs, device, lr=0.01, weight_decay=5e-4, e
 
         for batch in train_loader:
 
-            inputs = batch['input']
-            inputs = torch.unsqueeze(inputs, 1)
-            targets = batch['target']
+            # inputs = batch['input']
+            # inputs = torch.unsqueeze(inputs, 1)
+            # targets = batch['target']
+            inputs, targets = batch
 
             inputs, targets = inputs.to(device), targets.to(device)
 

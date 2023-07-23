@@ -8,8 +8,7 @@ def predict(net, dataset, idxs, device):
     net.to(device)
 
     total, correct = 0.0, 0.0
-    test_sample = set(np.random.choice(list(idxs), 250, replace=False))
-    test_loader = DataLoader(DatasetSplit(dataset, test_sample), batch_size=64, shuffle=False)
+    test_loader = DataLoader(DatasetSplit(dataset, idxs), batch_size=64, shuffle=False)
 
     net.eval()
 
@@ -17,9 +16,10 @@ def predict(net, dataset, idxs, device):
 
         for _, batch in enumerate(test_loader):
 
-            inputs = batch['input']
-            inputs = torch.unsqueeze(inputs, 1)
-            targets = batch['target']
+            # inputs = batch['input']
+            # inputs = torch.unsqueeze(inputs, 1)
+            # targets = batch['target']
+            inputs, targets = batch
 
             inputs, targets = inputs.to(device), targets.to(device)
 

@@ -9,6 +9,7 @@ def predict(net, dataset, idxs, device):
 
     total, correct = 0.0, 0.0
     test_loader = DataLoader(DatasetSplit(dataset, idxs), batch_size=64, shuffle=False)
+    print(len(idxs))
 
     net.eval()
 

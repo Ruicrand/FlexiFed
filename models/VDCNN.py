@@ -4,7 +4,7 @@
 """
 import torch.nn as nn
 from torch.nn.init import kaiming_normal_
-
+from torchsummary import summary
 
 class ConvBlock(nn.Module):
 
@@ -140,3 +140,6 @@ def VDCNN_29(shortcut=False):
 
 def VDCNN_49(shortcut=False):
     return VDCNN(n_classes=4, shortcut=shortcut)
+
+if __name__ == '__main__':
+

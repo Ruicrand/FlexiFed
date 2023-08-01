@@ -10,14 +10,14 @@ from torch.utils.data import DataLoader, WeightedRandomSampler
 
 
 # for speech commands, lr = 1e-4, weight_decay=1e-2
-def client_local_train(net, dataset, idxs, device, lr=0.01, weight_decay=5e-4, epochs=10):
+def client_local_train(net, dataset, idxs, device, lr=0.03, weight_decay=5e-4, epochs=10):
     net.to(device)
 
     criterion = nn.CrossEntropyLoss()
     criterion.to(device)
     optimizer = torch.optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=weight_decay)
 
-    train_sample = set(np.random.choice(list(idxs), 1000, replace=False))
+    train_sample = set(np.random.choice(list(idxs), 500, replace=False))
     train_dataset = DatasetSplit(dataset, train_sample)
 
     train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)

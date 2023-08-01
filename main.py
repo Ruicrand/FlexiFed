@@ -1,7 +1,10 @@
 import copy
+import os
+
 import torch
 import warnings
 
+from models.ResNet import *
 from models.VDCNN import *
 from models.VGG import *
 from scripts.fed import common_cluster, common_basic, common_max
@@ -10,7 +13,6 @@ from scripts.train import client_local_train
 from scripts.utils import get_dataset
 
 warnings.filterwarnings("ignore")
-
 
 if __name__ == '__main__':
 
@@ -24,8 +26,6 @@ if __name__ == '__main__':
 
     # Training
     epochs = 35
-    num_classes = 30
-    lr = 0.01
 
     uid = [_ for _ in range(device_num)]
     modelAccept = {_: None for _ in range(device_num)}  # client的参数列表
@@ -39,16 +39,21 @@ if __name__ == '__main__':
 
             if idx < 10:
                 # model = vgg11_bn(in_channels=1, num_classes=num_classes)
+                # model = resnet20(in_channels=1, num_classes=num_classes)
                 model = VDCNN_9()
             elif 10 <= idx < 20:
                 # model = vgg13_bn(in_channels=1, num_classes=num_classes)
+                # model = resnet32(in_channels=1, num_classes=num_classes)
                 model = VDCNN_17()
             elif 20 <= idx < 30:
                 # model = vgg16_bn(in_channels=1, num_classes=num_classes)
+                # model = resnet44(in_channels=1, num_classes=num_classes)
                 model = VDCNN_29()
             else:
                 # model = vgg19_bn(in_channels=1, num_classes=num_classes)
+                # model = resnet56(in_channels=1, num_classes=num_classes)
                 model = VDCNN_49()
+
             if epoch != 0:
                 model.load_state_dict(modelAccept[idx])
 

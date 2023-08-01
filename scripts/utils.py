@@ -42,7 +42,7 @@ def cifar_iid(dataset, num_users):
 
 
 def get_cifar(device_num):
-    data_dir = '/kaggle/input/cifar10-python'
+    data_dir = '/Users/chenrui/Desktop/课件/REPO/edge computing/project/data/cifar'
 
     train_transform = torchvision.transforms.Compose([
         torchvision.transforms.Pad(4),
@@ -127,7 +127,7 @@ def get_speech(device_num):
     # add_bg_noise = AddBackgroundNoiseOnSTFT(bg_dataset)
 
     # train_transform = torchvision.transforms.Compose(
-    #     [ToMelSpectrogram(n_mels=n_mels), DeleteSTFT(), ToTensor('mel_spectrogram', 'input')])
+    #     [ToMelSpectrogramFromSTFT(n_mels=n_mels), DeleteSTFT(), ToTensor('mel_spectrogram', 'input')])
     train_transform = torchvision.transforms.Compose(
         [ToMelSpectrogram(n_mels=n_mels), ToTensor('mel_spectrogram', 'input')])
     train_dataset = SpeechCommandsDataset(train_dataset,
@@ -183,7 +183,7 @@ def get_dataset(dataset_name, device_num):
     elif dataset_name == 'cinic10':
         return get_cinic(device_num)
 
-    elif dataset_name == 'SpeechCommands':
+    elif dataset_name == 'speechcommands':
         return get_speech(device_num)
 
     elif dataset_name == 'agnews':

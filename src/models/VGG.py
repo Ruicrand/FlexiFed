@@ -17,7 +17,7 @@ __all__ = [
     'vgg19',
 ]
 
-from scripts.utils import get_common_base_layers
+from src.scripts.utils import get_common_base_layers
 
 cfg = {
     'A': [64, 'M', 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],

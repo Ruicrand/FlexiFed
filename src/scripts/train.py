@@ -5,7 +5,7 @@ import torch
 import torch.nn as nn
 from tqdm import tqdm
 
-from scripts.utils import DatasetSplit, plot_spectrogram
+from utils import DatasetSplit, plot_spectrogram
 from torch.utils.data import DataLoader, WeightedRandomSampler
 
 
@@ -41,8 +41,10 @@ def client_local_train(net, dataset, idxs, device, lr=0.01, weight_decay=5e-4, e
 
 # for speech commands, lr = 1e-4, weight_decay=1e-2
 def client_local_train_1(net, dataset, idxs, device, lr=0.03, weight_decay=5e-4, epochs=10):
+
     net.to(device)
-    print(len(idxs))
+    net.train()
+
     criterion = nn.CrossEntropyLoss()
     criterion.to(device)
     optimizer = torch.optim.SGD(net.parameters(), lr=lr, momentum=0.9, weight_decay=weight_decay)
@@ -54,7 +56,6 @@ def client_local_train_1(net, dataset, idxs, device, lr=0.03, weight_decay=5e-4,
 
     for epoch in pbar:
 
-        net.train()
         correct, total = 0, 0
 
         for batch in train_loader:

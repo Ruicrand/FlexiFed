@@ -1,5 +1,5 @@
 import torch
-from scripts.utils import DatasetSplit
+from utils import DatasetSplit
 from torch.utils.data import DataLoader
 
 

@@ -90,10 +90,15 @@ class CharCNN(nn.Module):
 
     def forward(self, x):
         x = self.embedding(x).transpose(1, 2)
+        print(f'embedding{x.shape}')
+
         x = self.block1(x)
+        print(f'block1{x.shape}')
         if self.block2 is not None:
             x = self.block2(x)
+            print(f'block2{x.shape}')
         x = self.block3(x)
+        print(f'block2{x.shape}')
         x = x.view(x.size(0), -1)
         x = self.fc(x)
         return x
@@ -114,8 +119,7 @@ def CharCNN_5(m=70, l0=1014, num_classes=4):
 def CharCNN_6(m=70, l0=1014, num_classes=4):
     return CharCNN(6, m=m, l0=l0, num_classes=num_classes)
 
-# if __name__ == '__main__':
-#     model1 = CharCNN_3()
-#     model2 = CharCNN_4()
-#     pprint(model1.state_dict().keys())
-#     pprint(model2.state_dict().keys())
+
+if __name__ == '__main__':
+    model = CharCNN_6()
+    out = model(torch.zeros((1, 1014), dtype=torch.long))

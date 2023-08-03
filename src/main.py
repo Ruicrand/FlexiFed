@@ -28,7 +28,7 @@ if __name__ == '__main__':
     device_num = 40
 
     # load dataset and user groups
-    train_dataset, test_dataset, user_groups, user_groups_test = get_dataset('cifar10', device_num)
+    train_dataset, test_dataset, user_groups, user_groups_test = get_dataset('agnews', device_num, is_VDCNN=0)
 
     # Training
     epochs = 500
@@ -54,23 +54,23 @@ if __name__ == '__main__':
         for idx in range(device_num):
 
             if idx < 10:
-                model = vgg11_bn(in_channels=in_channel, num_classes=num_classes)
-                # model = resnet20(in_channels=in_channel, num_classes=num_classes)
+                # model = vgg11_bn(in_channels=in_channel, num_classes=num_classes)
+                model = resnet20(in_channels=in_channel, num_classes=num_classes)
                 # model = VDCNN_9()
                 # model = CharCNN_3()
             elif 10 <= idx < 20:
-                model = vgg13_bn(in_channels=in_channel, num_classes=num_classes)
-                # model = resnet32(in_channels=in_channel, num_classes=num_classes)
+                # model = vgg13_bn(in_channels=in_channel, num_classes=num_classes)
+                model = resnet32(in_channels=in_channel, num_classes=num_classes)
                 # model = VDCNN_17()
                 # model = CharCNN_4()
             elif 20 <= idx < 30:
-                model = vgg16_bn(in_channels=in_channel, num_classes=num_classes)
-                # model = resnet44(in_channels=in_channel, num_classes=num_classes)
+                # model = vgg16_bn(in_channels=in_channel, num_classes=num_classes)
+                model = resnet44(in_channels=in_channel, num_classes=num_classes)
                 # model = VDCNN_29()
                 # model = CharCNN_5()
             else:
-                model = vgg19_bn(in_channels=in_channel, num_classes=num_classes)
-                # model = resnet56(in_channels=in_channel, num_classes=num_classes)
+                # model = vgg19_bn(in_channels=in_channel, num_classes=num_classes)
+                model = resnet56(in_channels=in_channel, num_classes=num_classes)
                 # model = VDCNN_49()
                 # model = CharCNN_6()
 
@@ -79,7 +79,7 @@ if __name__ == '__main__':
 
             idx_train_all = list(user_groups[idx])
             idx_train_batch = set(idx_train_all[int(st):int(ed)])
-            modelAccept[idx] = copy.deepcopy(client_local_train(model, train_dataset, idx_train_batch, device))
+            modelAccept[idx] = copy.deepcopy(client_local_train_1(model, train_dataset, idx_train_batch, device))
 
             if epoch % predict_period == 0:
                 acc = predict(model, test_dataset, user_groups_test[idx], device)

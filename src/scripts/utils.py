@@ -10,10 +10,10 @@ from torch.utils.data import Dataset
 from torchvision import datasets
 import torchtext
 
-from process.transforms_stft import *
-from process.transforms_wav import *
-from scripts.agnews_dataset import AGNewsDataset
-from scripts.speech_commands_dataset import SpeechCommandsDataset, BackgroundNoiseDataset
+from src.process.transforms_stft import *
+from src.process.transforms_wav import *
+from src.scripts.agnews_dataset import AGNewsDataset
+from src.scripts.speech_commands_dataset import SpeechCommandsDataset, BackgroundNoiseDataset
 import matplotlib.pyplot as plt
 
 

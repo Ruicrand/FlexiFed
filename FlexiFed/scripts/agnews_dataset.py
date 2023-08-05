@@ -1,0 +1,55 @@
+# -*- coding: utf-8 -*-
+"""
+@author: Viet Nguyen <nhviet1009@gmail.com>
+"""
+import sys
+import csv
+from torch.utils.data import Dataset
+
+csv.field_size_limit(sys.maxsize)
+
+ALPHABET = [
+    "abcdefghijklmnopqrstuvwxyz0123456789-,;.!?:'\"/\\|_@#$%^&*~`+-=<>()[]{}\n",
+    "abcdefghijklmnopqrstuvwxyz0123456789-,;.!?:'\"/\\|_@#$%^&*~`+-=<>()[]{}"
+]
+MAX_LEN = [1014, 1024]
+
+
+class AGNewsDataset(Dataset):
+    def __init__(self, data_path, is_VDCNN=0, transform=None):
+        self.data_path = data_path
+        self.vocabulary = list(ALPHABET[is_VDCNN])
+        texts, labels = [], []
+        with open(data_path) as csv_file:
+            reader = csv.reader(csv_file, quotechar='"')
+            for idx, line in enumerate(reader):
+                text = ""
+                for tx in line[1:]:
+                    text += tx
+                    text += " "
+                label = int(line[0]) - 1
+                texts.append(text)
+                labels.append(label)
+        self.texts = texts
+        self.labels = labels
+        self.max_length = MAX_LEN[is_VDCNN]
+        self.length = len(self.labels)
+        self.num_classes = len(set(self.labels))
+        self.transform = transform
+
+    def __len__(self):
+        return self.length
+
+    def __getitem__(self, index):
+        raw_text = self.texts[index]
+        data = [self.vocabulary.index(i) + 1 for i in list(raw_text) if i in self.vocabulary]
+        if len(data) > self.max_length:
+            data = data[:self.max_length]
+        elif len(data) < self.max_length:
+            data += [0] * (self.max_length - len(data))
+        label = self.labels[index]
+
+        if self.transform is not None:
+            data = self.transform(data)
+
+        return data, label

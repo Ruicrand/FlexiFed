@@ -2,7 +2,7 @@
 
 复现论文 : [FlexiFed: Personalized Federated Learning for Edge Clients with Heterogeneous Model Architectures](https://dl.acm.org/doi/10.1145/3543507.3583347)
 
-
+https://raw.githubusercontent.com/Ruicrand/FlexiFed/main
 
 ### 项目结构
 
@@ -42,69 +42,41 @@
 
 - **VGG-family**
 
-<center>
+<div align=center>
     <img style="border-radius: 0.3125em;
     box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
     src="img/model/VGG.svg" width = "65%" alt=""/>
-    <br>
-    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-    display: inline-block;
-    color: #999;
-    padding: 2px;">
-      VGG-family架构
-  	</div>
-</center>
+</div>
 
 
 
 - **ResNet-family**
 
-<center>
+<div align=center>
     <img style="border-radius: 0.3125em;
     box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
     src="img/model/ResNet.svg" width = "65%" alt=""/>
-    <br>
-    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-    display: inline-block;
-    color: #999;
-    padding: 2px;">
-      ResNet-family架构
-  	</div>
-</center>
+</div>
 
 
 
 - **VDCNN-family**
 
-<center>
+<div align=center>
     <img style="border-radius: 0.3125em;
     box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
     src="img/model/VDCNN.svg" width = "65%" alt=""/>
-    <br>
-    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-    display: inline-block;
-    color: #999;
-    padding: 2px;">
-      VDCNN-family架构
-  	</div>
-</center>
+</div>
 
 
 
 - **CharCNN-family**
 
-<center>
+<div align=center>
     <img style="border-radius: 0.3125em;
     box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
     src="img/model/CharCNN.svg" width = "65%" alt=""/>
-    <br>
-    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-    display: inline-block;
-    color: #999;
-    padding: 2px;">
-      CharCNN-family架构
-  	</div>
-</center>
+</div>
 
 
 
@@ -129,65 +101,39 @@
 
 - VGG-family on CIFAR-10 :
 
-  <center>
-      <img style="border-radius: 0.3125em;
-      box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
-      src="result/CIFAR-10/VGG/model.svg" width = "65%" alt=""/>
-      <br>
-      <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-      display: inline-block;
-      color: #999;
-      padding: 2px;">
-        A
-    	</div>
-  </center>
-  
-  <center>
+<div align=center>
+	<img style="border-radius: 0.3125em;
+	box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
+	src="result/CIFAR-10/VGG/model.svg" width = "65%" alt=""/>
+</div>
+
+<div align=center>
       <img style="border-radius: 0.3125em;
       box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
       src="result/CIFAR-10/VGG/strategy.svg" width = "80%" alt=""/>
-      <br>
-      <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-      display: inline-block;
-      color: #999;
-      padding: 2px;">
-        B
-    	</div>
-  </center>
+</div>
+
   |     Stategy      |  V1  |  V2  |  V3  |  V4  |
   | :--------------: | :--: | :--: | :--: | :--: |
   |   Basic-Common   | 72.9 | 76.0 | 74.6 | 76.9 |
   | Clustered-Common | 76.8 | 78.7 | 79.3 | 78.2 |
   |    Max-Common    | 77.1 | 83.9 | 81.6 | 81.3 |
+
   
-  
-  
+
 - VGG-family on CINIC-10 :
 
-  <center>
+<div align=center>
       <img style="border-radius: 0.3125em;
       box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
       src="result/CINIC-10/VGG/model.svg" width = "65%" alt=""/>
-      <br>
-      <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-      display: inline-block;
-      color: #999;
-      padding: 2px;">
-        A
-    	</div>
-  </center>
-  <center>
+</div>
+<div align=center>
       <img style="border-radius: 0.3125em;
       box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
       src="result/CINIC-10/VGG/strategy.svg" width = "80%" alt=""/>
-      <br>
-      <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-      display: inline-block;
-      color: #999;
-      padding: 2px;">
-        B
-    	</div>
-  </center>
+</div>
+
 
   |     Stategy      |  V1  |  V2  |  V3  |  V4  |
   | :--------------: | :--: | :--: | :--: | :--: |
@@ -199,65 +145,40 @@
 
 - VGG-family on Speech Commands :
 
-  <center>
+  <div align=center>
       <img style="border-radius: 0.3125em;
       box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
       src="result/SpeechCommands/VGG/model.svg" width = "65%" alt=""/>
-      <br>
-      <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-      display: inline-block;
-      color: #999;
-      padding: 2px;">
-        A
-    	</div>
-  </center>
-  <center>
+  </div>
+  
+  <div align=center>
       <img style="border-radius: 0.3125em;
       box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
       src="result/SpeechCommands/VGG/strategy.svg" width = "80%" alt=""/>
-      <br>
-      <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-      display: inline-block;
-      color: #999;
-      padding: 2px;">
-        B
-    	</div>
-  </center>
-
+  </div>
+  
+  
   |     Stategy      |  V1  |  V2  |  V3  |  V4  |
   | :--------------: | :--: | :--: | :--: | :--: |
   |   Basic-Common   | 85.5 | 85.9 | 84.9 | 83.2 |
   | Clustered-Common | 87.5 | 88.8 | 87.2 | 86.4 |
   |    Max-Common    | 88.1 | 90.7 | 90.7 | 90.6 |
-
   
-
+  
+  
 - ResNet-family on CIFAR-10 :
 
-  <center>
+  <div align=center>
       <img style="border-radius: 0.3125em;
       box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
       src="result/CIFAR-10/ResNet/model.svg" width = "65%" alt=""/>
-      <br>
-      <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-      display: inline-block;
-      color: #999;
-      padding: 2px;">
-        A
-    	</div>
-  </center>
-  <center>
+  </div>
+  <div align=center>
       <img style="border-radius: 0.3125em;
       box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
       src="result/CIFAR-10/ResNet/strategy.svg" width = "80%" alt=""/>
-      <br>
-      <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-      display: inline-block;
-      color: #999;
-      padding: 2px;">
-        B
-    	</div>
-  </center>
+  </div>
+  
   
   |     Stategy      |  V1  |  V2  |  V3  |  V4  |
   | :--------------: | :--: | :--: | :--: | :--: |
@@ -269,30 +190,17 @@
   
 - ResNet-family on CINIC-10 :
 
-  <center>
+  <div align=center>
       <img style="border-radius: 0.3125em;
       box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
       src="result/CINIC-10/ResNet/model.svg" width = "65%" alt=""/>
-      <br>
-      <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-      display: inline-block;
-      color: #999;
-      padding: 2px;">
-        A
-    	</div>
-  </center>
-  <center>
+  </div>
+  <div align=center>
       <img style="border-radius: 0.3125em;
       box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
       src="result/CINIC-10/ResNet/strategy.svg" width = "80%" alt=""/>
-      <br>
-      <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-      display: inline-block;
-      color: #999;
-      padding: 2px;">
-        B
-    	</div>
-  </center>
+  </div>
+  
   
   |     Stategy      |  V1  |  V2  |  V3  |  V4  |
   | :--------------: | :--: | :--: | :--: | :--: |
@@ -308,26 +216,15 @@
       <img style="border-radius: 0.3125em;
       box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
       src="result/SpeechCommands/ResNet/model.svg" width = "65%" alt=""/>
-      <br>
-      <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-      display: inline-block;
-      color: #999;
-      padding: 2px;">
-        A
-    	</div>
   </center>
-  <center>
+  
+  <div align=center>
       <img style="border-radius: 0.3125em;
       box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
       src="result/SpeechCommands/ResNet/strategy.svg" width = "80%" alt=""/>
-      <br>
-      <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-      display: inline-block;
-      color: #999;
-      padding: 2px;">
-        B
-    	</div>
-  </center>
+  </div>
+  
+  
   
   |     Stategy      |  V1  |  V2  |  V3  |  V4  |
   | :--------------: | :--: | :--: | :--: | :--: |
@@ -339,30 +236,17 @@
   
 - CharCNN-family on AG News :
 
-  <center>
+  <div align=center>
       <img style="border-radius: 0.3125em;
       box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
       src="result/AGNews/CharCNN/model.svg" width = "65%" alt=""/>
-      <br>
-      <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-      display: inline-block;
-      color: #999;
-      padding: 2px;">
-        A
-    	</div>
-  </center>
-  <center>
+  </div>
+  <div align=center>
       <img style="border-radius: 0.3125em;
       box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
       src="result/AGNews/CharCNN/strategy.svg" width = "80%" alt=""/>
-      <br>
-      <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-      display: inline-block;
-      color: #999;
-      padding: 2px;">
-        B
-    	</div>
-  </center>
+  </div>
+  
   
   |      Scheme      |  V1  |  V2  |  V3  |  V4  |
   | :--------------: | :--: | :--: | :--: | :--: |
@@ -374,30 +258,16 @@
   
 - VDCNN-family on AG News :
 
-  <center>
+  <div align=center>
       <img style="border-radius: 0.3125em;
       box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
       src="result/AGNews/VDCNN/model.svg" width = "65%" alt=""/>
-      <br>
-      <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-      display: inline-block;
-      color: #999;
-      padding: 2px;">
-        A
-    	</div>
-  </center>
-  <center>
+  </div>
+  <div align=center>
       <img style="border-radius: 0.3125em;
       box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
       src="result/AGNews/VDCNN/strategy.svg" width = "80%" alt=""/>
-      <br>
-      <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-      display: inline-block;
-      color: #999;
-      padding: 2px;">
-        B
-    	</div>
-  </center>
+  </div>
 
 
 
@@ -405,21 +275,15 @@
 
 正确率汇总见下表:
 
- <center>
+<div align=center>
     <img style="border-radius: 0.3125em;
     box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
     src="result/FinalResult.svg" width = "40%" alt=""/>
     <img style="border-radius: 0.3125em;
     box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
     src="result/paper.png" width = "40%" alt=""/>
-    <br>
-    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-    display: inline-block;
-    color: #999;
-    padding: 2px;">
-      与论文数据对比
-  	</div>
-</center>
+</div>
+
 
 结合上表和复现结果中的曲线和数据，基本上可以得出结论：
 $$
@@ -455,21 +319,15 @@ $$
 - 大概率出现频繁震荡，始终不收敛
 - 即便开始增长，收敛速度较慢
 
- <center>
+<div align=center>
     <img style="border-radius: 0.3125em;
     box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
     src="result/SpeechCommands/VGG/basic-common/normal/normal.png" width = "40%" alt=""/>
     <img style="border-radius: 0.3125em;
     box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
     src="result/SpeechCommands/VGG/basic-common/xavier/Basic-Common.svg" width = "40%" alt=""/>
-    <br>
-    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-    display: inline-block;
-    color: #999;
-    padding: 2px;">
-      VGG-family on SpeechCommands
-  	</div>
-</center>
+</div>
+
 
 上图左采用正态分布初始化参数，图右采用xavier-normal初始化参数
 
@@ -492,15 +350,8 @@ $$
 1. 由于实验条件受限，存在许多未完全收敛的情况，仍然有非常缓慢上升的趋势
 2. 对于不同的数据集，若模型最终拟合的函数不属于嵌套关系，可能会出现较深层模型得到的结果，比合适层数模型得到的结果要差
 
-<center>
+<div align=center>
     <img style="border-radius: 0.3125em;
     box-shadow: 0 2px 4px 0 rgba(34,36,38,.12),0 2px 10px 0 rgba(34,36,38,.08);" 
     src="img/functionclasses.svg" width = "80%" alt=""/>
-    <br>
-    <div style="color:orange; border-bottom: 1px solid #d9d9d9;
-    display: inline-block;
-    color: #999;
-    padding: 2px;">
-      模型类别
-  	</div>
-</center>
+</div>

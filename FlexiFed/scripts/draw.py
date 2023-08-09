@@ -27,7 +27,3 @@ def plot_2d_list(data, predict_period, title, fig_width=8, fig_height=6):
 
     plt.title(title)
     plt.savefig(title + '.svg', format="svg")
-
-
-if __name__ == '__main__':
-    data = np.random.rand(8, 10, )

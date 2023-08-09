@@ -5,8 +5,7 @@ import torchvision
 from torch.utils.data import Dataset
 from torchvision import datasets
 from scripts.speech_commands_dataset import SpeechCommandsDataset
-# import torchtext
-# from scripts.agnews_dataset import AGNewsDataset
+from scripts.agnews_dataset import AGNewsDataset
 
 
 class DatasetSplit(Dataset):
@@ -34,7 +33,6 @@ def split_iid(dataset, num_users):
 
 
 def get_cifar(device_num, data_dir):
-
     mean = [0.4914, 0.4822, 0.4465]
     std = [0.2023, 0.1994, 0.2010]
 
@@ -60,7 +58,6 @@ def get_cifar(device_num, data_dir):
 
 
 def get_cinic(device_num, data_dir):
-
     mean = [0.47889522, 0.47227842, 0.43047404]
     std = [0.24205776, 0.23828046, 0.25874835]
 
@@ -99,24 +96,20 @@ def get_speech(device_num, data_dir):
     return train_dataset, test_dataset, user_groups, user_groups_test
 
 
-# def get_agnews(device_num, data_dir, is_VDCNN):
-#     train_dataset = os.path.join(data_dir, 'train.csv')
-#     test_dataset = os.path.join(data_dir, 'test.csv')
-#
-#     train_transform = torchvision.transforms.Compose([torchtext.transforms.ToTensor()])
-#     test_transform = torchvision.transforms.Compose([torchtext.transforms.ToTensor()])
-#
-#     train_dataset = AGNewsDataset(train_dataset, is_VDCNN=is_VDCNN, transform=train_transform)
-#     test_dataset = AGNewsDataset(test_dataset, is_VDCNN=is_VDCNN, transform=test_transform)
-#
-#     user_groups = split_iid(train_dataset, device_num)
-#     user_groups_test = split_iid(test_dataset, device_num)
-#
-#     return train_dataset, test_dataset, user_groups, user_groups_test
+def get_agnews(device_num, data_dir, is_VDCNN):
+    train_dataset = os.path.join(data_dir, 'train.csv')
+    test_dataset = os.path.join(data_dir, 'test.csv')
+
+    train_dataset = AGNewsDataset(train_dataset, is_VDCNN=is_VDCNN)
+    test_dataset = AGNewsDataset(test_dataset, is_VDCNN=is_VDCNN)
+
+    user_groups = split_iid(train_dataset, device_num)
+    user_groups_test = split_iid(test_dataset, device_num)
+
+    return train_dataset, test_dataset, user_groups, user_groups_test
 
 
 def get_dataset(dataset_name, device_num, data_dir, is_VDCNN=0):
-
     if dataset_name == 'cifar10':
         return get_cifar(device_num, data_dir)
 
@@ -126,9 +119,9 @@ def get_dataset(dataset_name, device_num, data_dir, is_VDCNN=0):
     elif dataset_name == 'speechcommands':
         return get_speech(device_num, data_dir)
 
-    # # if train on VDCNN, is_VDCNN = 1
-    # elif dataset_name == 'agnews':
-    #     return get_agnews(device_num, is_VDCNN, data_dir)
+    # if train on VDCNN, is_VDCNN = 1
+    elif dataset_name == 'agnews':
+        return get_agnews(device_num, data_dir, is_VDCNN)
 
 
 def get_common_base_layers(model_list):
@@ -151,7 +144,6 @@ def get_common_base_layers(model_list):
                 del commonList[j:len(commonList) + 1]
                 break
     return commonList
-
 
 # def get_speech(device_num):
 #

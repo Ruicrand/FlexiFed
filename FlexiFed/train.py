@@ -38,19 +38,19 @@ if __name__ == "__main__":
     # opt = get_args()
     opt = {
         'strategy': 'Basic',
-        'data_set': 'speechcommands',
+        'data_set': 'agnews',
         'save_period': 1,
-        'lr': 0.0001,
-        'weight_decay': 1e-2,
+        'lr': 0.01,
+        'weight_decay': 5e-4,
         'visual': 1,
         'epochs': 252,
         'in_channel': 1,
-        'num_classes': 30
+        'num_classes': 4
     }
     train(OPT(opt))
-
-    opt['strategy'] = 'Clustered'
-    train(OPT(opt))
-
-    opt['strategy'] = 'Max'
-    train(OPT(opt))
+    #
+    # opt['strategy'] = 'Clustered'
+    # train(OPT(opt))
+    #
+    # opt['strategy'] = 'Max'
+    # train(OPT(opt))

@@ -12,7 +12,7 @@ def _weights_init(m):
     classname = m.__class__.__name__
     # print(classname)
     if isinstance(m, nn.Linear) or isinstance(m, nn.Conv2d):
-        init.kaiming_normal_(m.weight)
+        init.xavier_normal_(m.weight)
 
 
 class LambdaLayer(nn.Module):

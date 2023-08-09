@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 import warnings
-from torch.nn.init import kaiming_normal_
 
 warnings.filterwarnings("ignore")
 
@@ -83,14 +82,9 @@ class CharCNN(nn.Module):
 
         for m in self.modules():
             if isinstance(m, nn.Conv1d):
-                m.weight.data.normal_(0, 0.05)
+                nn.init.xavier_normal(m.weight)
             elif isinstance(m, nn.Linear):
-                m.weight.data.normal_(0, 0.05)
-
-    def __init_weights(self):
-        for m in self.modules():
-            if isinstance(m, nn.Conv1d):
-                kaiming_normal_(m.weight, mode='fan_in', nonlinearity='relu')
+                nn.init.xavier_normal(m.weight)
 
     def forward(self, x):
         x = self.embedding(x).transpose(1, 2)

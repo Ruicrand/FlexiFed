@@ -4,6 +4,7 @@
 """
 import sys
 import csv
+import torch
 from torch.utils.data import Dataset
 
 csv.field_size_limit(sys.maxsize)
@@ -16,7 +17,7 @@ MAX_LEN = [1014, 1024]
 
 
 class AGNewsDataset(Dataset):
-    def __init__(self, data_path, is_VDCNN=0, transform=None):
+    def __init__(self, data_path, is_VDCNN=0):
         self.data_path = data_path
         self.vocabulary = list(ALPHABET[is_VDCNN])
         texts, labels = [], []
@@ -35,21 +36,20 @@ class AGNewsDataset(Dataset):
         self.max_length = MAX_LEN[is_VDCNN]
         self.length = len(self.labels)
         self.num_classes = len(set(self.labels))
-        self.transform = transform
 
     def __len__(self):
         return self.length
 
     def __getitem__(self, index):
-        raw_text = self.texts[index]
-        data = [self.vocabulary.index(i) + 1 for i in list(raw_text) if i in self.vocabulary]
-        if len(data) > self.max_length:
-            data = data[:self.max_length]
-        elif len(data) < self.max_length:
-            data += [0] * (self.max_length - len(data))
-        label = self.labels[index]
 
-        if self.transform is not None:
-            data = self.transform(data)
+        raw_text = self.texts[index]
+        data = torch.zeros(self.max_length, dtype=torch.long)
+
+        for idx, char in enumerate(raw_text):
+            if idx == self.max_length:
+                break
+            if char in self.vocabulary:
+                data[idx] = self.vocabulary.index(char) + 1
+        label = torch.tensor(self.labels[index])
 
         return data, label

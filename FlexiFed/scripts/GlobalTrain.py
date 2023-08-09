@@ -18,18 +18,16 @@ from scripts.utils import get_dataset
 warnings.filterwarnings("ignore")
 
 Data_dir = {
-    'cifar10': '/Users/chenrui/Desktop/课件/REPO/edge computing/project/data/cifar',
-    # 'cifar10': '/root/autodl-tmp/cifar10',
+    'cifar10': '/root/autodl-tmp/cifar10',
     'cinic10': '/root/autodl-tmp/cinic10',
-    # 'speechcommands': '/root/autodl-tmp/SpeechCommands.h5',
-    'speechcommands': '/Users/chenrui/Desktop/课件/REPO/edge computing/project/data/SpeechCommands.h5',
+    'speechcommands': '/root/autodl-tmp/SpeechCommands.h5',
     'agnews': '/root/autodl-tmp/agnews'
 }
 
 
 def global_train(opt):
-    device = torch.device('mps')
-    model = 'VGG'
+    device = torch.device('cuda')
+    model = 'VDCNN'
 
     save_period = opt.save_period
     strategy = opt.strategy
@@ -37,7 +35,7 @@ def global_train(opt):
     visual = opt.visual
 
     title = strategy + '-Common'
-    res_dir = os.path.join('/Users/chenrui/Desktop/课件/REPO/edge computing/project/Project/FlexiFed/scripts/result',
+    res_dir = os.path.join('',
                            data_set, model, title)
 
     predict_period = 1
@@ -47,7 +45,8 @@ def global_train(opt):
     # load dataset and user groups
     train_dataset, test_dataset, user_groups, user_groups_test = get_dataset(dataset_name=data_set,
                                                                              device_num=device_num,
-                                                                             data_dir=Data_dir[data_set])
+                                                                             data_dir=Data_dir[data_set],
+                                                                             is_VDCNN=model == 'VDCNN')
 
     # Training
     lr = opt.lr
@@ -70,27 +69,27 @@ def global_train(opt):
         for idx in range(device_num):
 
             if idx < 2:
-                model = vgg11_bn(in_channels=in_channel, num_classes=num_classes)
+                # model = vgg11_bn(in_channels=in_channel, num_classes=num_classes)
                 # model = resnet20(in_channels=in_channel, num_classes=num_classes)
-                # model = VDCNN_9()
+                model = VDCNN_9()
                 # model = CharCNN_3()
 
             elif 2 <= idx < 4:
-                model = vgg13_bn(in_channels=in_channel, num_classes=num_classes)
+                # model = vgg13_bn(in_channels=in_channel, num_classes=num_classes)
                 # model = resnet32(in_channels=in_channel, num_classes=num_classes)
-                # model = VDCNN_17()
+                model = VDCNN_17()
                 # model = CharCNN_4()
 
             elif 4 <= idx < 6:
-                model = vgg16_bn(in_channels=in_channel, num_classes=num_classes)
+                # model = vgg16_bn(in_channels=in_channel, num_classes=num_classes)
                 # model = resnet44(in_channels=in_channel, num_classes=num_classes)
-                # model = VDCNN_29()
+                model = VDCNN_29()
                 # model = CharCNN_5()
 
             else:
-                model = vgg19_bn(in_channels=in_channel, num_classes=num_classes)
+                # model = vgg19_bn(in_channels=in_channel, num_classes=num_classes)
                 # model = resnet56(in_channels=in_channel, num_classes=num_classes)
-                # model = VDCNN_49()
+                model = VDCNN_49()
                 # model = CharCNN_6()
 
             if epoch != 0:

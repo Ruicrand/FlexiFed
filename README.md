@@ -2,7 +2,7 @@
 
 复现论文 : [FlexiFed: Personalized Federated Learning for Edge Clients with Heterogeneous Model Architectures](https://dl.acm.org/doi/10.1145/3543507.3583347)
 
-https://raw.githubusercontent.com/Ruicrand/FlexiFed/main
+
 
 ### 项目结构
 
